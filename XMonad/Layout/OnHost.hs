@@ -12,7 +12,7 @@
 --
 -- Configure layouts on a per-host basis: use layouts and apply
 -- layout modifiers selectively, depending on the host.  Heavily based on
--- XMonad.Layout.PerWorkspace by Brent Yorgey.
+-- "XMonad.Layout.PerWorkspace" by Brent Yorgey.
 -----------------------------------------------------------------------------
 
 module XMonad.Layout.OnHost (-- * Usage
@@ -37,12 +37,12 @@ import           System.Posix.Env                  (getEnv)
 --
 -- > import XMonad.Layout.OnHost
 --
--- and modifying your layoutHook as follows (for example):
+-- and modifying your 'layoutHook' as follows (for example):
 --
--- > layoutHook = modHost "baz" m1 $  -- apply layout modifier m1 to all layouts on host "baz"
--- >              onHost "foo" l1 $  -- layout l1 will be used on host "foo".
--- >              onHosts ["bar","quux"] l2 $  -- layout l2 will be used on hosts "bar" and "quux".
--- >              l3                      -- layout l3 will be used on all other hosts.
+-- > layoutHook = modHost "baz" m1 $            -- apply layout modifier m1 to all layouts on host "baz"
+-- >              onHost "foo" l1 $             -- layout l1 will be used on host "foo".
+-- >              onHosts ["bar","quux"] l2 $   -- layout l2 will be used on hosts "bar" and "quux".
+-- >              l3                            -- layout l3 will be used on all other hosts.
 --
 -- Note that @l1@, @l2@, and @l3@ can be arbitrarily complicated
 -- layouts, e.g. @(Full ||| smartBorders $ tabbed shrinkText
@@ -116,7 +116,7 @@ data OnHost l1 l2 a = OnHost [String]
 instance (LayoutClass l1 a, LayoutClass l2 a, Show a) => LayoutClass (OnHost l1 l2) a where
     runLayout (W.Workspace i p@(OnHost hosts _ lt lf) ms) r = do
       h <- io $ getEnv "HOST"
-      if maybe False (`elemFQDN` hosts) h 
+      if maybe False (`elemFQDN` hosts) h
         then do (wrs, mlt') <- runLayout (W.Workspace i lt ms) r
                 return (wrs, Just $ mkNewOnHostT p mlt')
         else do (wrs, mlt') <- runLayout (W.Workspace i lf ms) r
